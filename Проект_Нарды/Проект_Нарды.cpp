@@ -43,6 +43,15 @@ int Throw_Block() {  //Имитация броска кубиков
 	return (rand() % 6 + 1);
 }
 
+void Put_Chip_to_Position(int position, int place, char chip) { //Функция для выставления фишек на начальные позиции
+	if (position <= 12) {
+		Field[place][Field[0].size() - 4 * position + 1] = chip;
+	}
+	else {
+		Field[24 - place][4 * (position % 12) - 2] = chip;
+	}
+}
+
 
 
 int main()
