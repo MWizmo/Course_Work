@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <conio.h>
+#include <ctime>
 using namespace std;
 
 string Field[25];  //Доска для игры,выполненная в виде массива 
@@ -29,6 +30,17 @@ void Field_Display() {     //Вывод поля на экран
 		cout << Field[i] << endl;
 	}
 	cout << "  13  14  15  16  17  18  19  20  21  22  23  24 " << endl;
+}
+
+int First_Step() {    //Выбор,кто ходит первым
+	srand(clock());
+	int Random_Choice = rand() % 2 + 1;
+	return Random_Choice;
+}
+
+int Throw_Block() {  //Имитация броска кубиков
+	srand(clock());
+	return (rand() % 6 + 1);
 }
 
 
