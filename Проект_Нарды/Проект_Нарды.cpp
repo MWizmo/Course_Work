@@ -6,6 +6,7 @@
 using namespace std;
 
 string Field[25];  //Доска для игры,выполненная в виде массива 
+int Chips_of_Players[2];
 
 void Rules() {
 	system("cls");
@@ -52,13 +53,55 @@ void Put_Chip_to_Position(int position, int place, char chip) { //Функция для вы
 	}
 }
 
+void Start_Game(int who_is_first) {
+	Field_Creation();
+	if (who_is_first == 1) {  //Рандомный выбор игрока,который ходит первым
+		for (int i = 1; i <= 15; i++) {
+			Put_Chip_to_Position(1, i, 'O');  //Выставление всех фишек
+			Put_Chip_to_Position(13, i, 'X'); //                        на поле
+		}
+	}
+	else {
+		for (int i = 1; i <= 15; i++) {
+			Put_Chip_to_Position(1, i, 'X');
+			Put_Chip_to_Position(13, i, 'O');
+		}
+	}
+	Chips_of_Players[0] = Chips_of_Players[1] = 15;
+	Field_Display();  //Вывод на экран готовой к игре доски
+}
 
+void Game() {
+	cout << "--Добро пожаловать в игру 'Нарды'.--\n\n Хотите прочитать правила?(y/n)\n";
+	char request;
+	cin >> request;
+	if (request == 'y') {
+		Rules();
+	}
+	system("cls");
+	int Who_is_first;
+	char chip1, chip2; //Фишки первого и второго игрока
+	
+	if (First_Step() == 1) {
+		cout << "   -- Первыми ходят нолики (O) -- " << endl;
+		Who_is_first = 1;
+		chip1 = 'O';
+		chip2 = 'X';
+	}                                //Выбор фишек для каждого игрока в зависимости от того,кто первым ходит
+	else {
+		cout << "   -- Первыми ходят крестики (X) --" << endl;
+		Who_is_first = 2;
+		chip1 = 'X';
+		chip2 = 'O';
+	}
+	cout << endl;
+	Start_Game(Who_is_first);
+}
 
 int main()
 {
 	setlocale(LC_ALL, "rus");
-	Field_Creation();
-	Field_Display();
+	Game();
 	system("pause");
     return 0;
 }
