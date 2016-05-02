@@ -53,6 +53,107 @@ void Put_Chip_to_Position(int position, int place, char chip) { //Функция для вы
 	}
 }
 
+bool Is_This_Turn_Possible(int position1, int position2, char chip) { //Проверка,можно ли совершить ход из pos1 в pos2
+	if ((position1 > position2) && (position1 <= 19)) //Назад ходить нельзя
+		return false;
+	if (position1 == position2) return false;
+	//Происходит проверка,какие фишки находятся в каждой из ячеек
+	char pos1, pos2; //Координаты центров обрабатываемых ячеек
+	if (position1 <= 12) {
+		pos1 = Field[1][Field[0].size() - 4 * position1 + 1]; //Если первая ячейка в верхней половине
+	}
+	else {
+		if (position1 == 24) {
+			pos1 = Field[23][Field[0].size() - 3];
+		}
+		else
+			pos1 = Field[23][4 * (position1 % 12) - 2]; //Если в нижней
+	}
+
+	if (position2 <= 12) {
+		pos2 = Field[1][Field[0].size() - 4 * position2 + 1];  //Если вторая ячейка в верхней половине
+	}
+	else {
+		if (position2 == 24) {
+			pos2 = Field[23][Field[0].size() - 3];
+		}
+		else
+			pos2 = Field[23][4 * (position2 % 12) - 2];  //Если в нижней
+	}
+	if (pos1 != chip) return false;
+	if (pos1 == ' ')  //Из пустой ячейки ходить нельзя
+		return false;
+	if (pos2 == ' ') return true;  //В пустую ячейку можно ходить хоть чем
+	if (pos1 == pos2) return true;  //Нельзя класть разные фишки друг на друга,а одинаковые можно
+	else return false;
+}
+
+void Turn(int position1, int position2,char chip) {
+	int place1, place2, i;
+	if (!Is_This_Turn_Possible(position1, position2,chip)) { //Проверка возможности хода
+		cout << "~~Данный ход невозможен,попробуйте еще раз~~" << endl;
+	}
+	else     //Поиск координат фишки в поле. position-координата в строке, place-номер строки. Вначале определяется координаты середин ячеек в строке,затем ищется строка,в которой находится самая верхняя фишка,чтобы затем переместить именно ее
+	{
+		if (position1 <= 12) {
+			position1 = Field[0].size() - 4 * position1 + 1;
+			place1 = 1;
+			for (i = 2; i <= 16; i++) {
+				if (Field[i][position1] != ' ') {
+					place1++;
+				}
+				else break;
+
+			}
+		}
+		else {
+			if (position1 == 24) {
+				position1 = Field[0].size() - 3;
+			}
+			else
+				position1 = 4 * (position1 % 12) - 2;
+			place1 = 23;
+			for (i = 23; i >= 8; i--) {
+				if (Field[i][position1] != ' ') {
+					place1--;
+				}
+				else {
+					place1++;  //Magic
+					break;
+				}
+			}
+		}
+
+		if (position2 <= 12) {
+			position2 = Field[0].size() - 4 * position2 + 1;
+			place2 = 1;
+			for (i = 1; i <= 15; i++) {   //Magic
+				if (Field[i][position2] != ' ') {
+					place2++;
+				}
+				else break;
+			}
+		}
+		else {
+			if (position2 == 24) {
+				position2 = Field[0].size() - 3;
+			}
+			else
+				position2 = 4 * (position2 % 12) - 2;
+			place2 = 23;
+			for (i = 23; i >= 8; i--) {
+				if (Field[i][position2] != ' ') {
+					place2--;
+				}
+				else break;
+
+			}
+		}
+
+		swap(Field[place1][position1], Field[place2][position2]); //Если все выполнено верно,то меняется соответствующая фишка из первой ячейки и пустота из второй ячейки
+	}
+}
+
 void Start_Game(int who_is_first) {
 	Field_Creation();
 	if (who_is_first == 1) {  //Рандомный выбор игрока,который ходит первым
