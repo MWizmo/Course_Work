@@ -3,6 +3,8 @@
 #include <string>
 #include <conio.h>
 #include <ctime>
+#include <Windows.h>
+#include <vector>
 using namespace std;
 
 string Field[25];  //Доска для игры,выполненная в виде массива 
@@ -51,6 +53,38 @@ void Put_Chip_to_Position(int position, int place, char chip) { //Функция для вы
 	else {
 		Field[24 - place][4 * (position % 12) - 2] = chip;
 	}
+}
+
+void Delete_Chip(int position) {  //Удаление одной фишки из ячейки(возможно,с вершины горки)
+	int place;     //Номер строки,в которой находится вершина горки
+	if (position <= 12) {   //Если ячейка находится в верхней половине
+		position = Field[0].size() - 4 * position + 1;  //Индекс середины ячейки в строке
+		place = 1;
+		for (int i = 2; i <= 16; i++) {
+			if (Field[i][position] != ' ') {  //Поиск вершины идет до обнаружения пустоты
+				place++;
+			}
+			else break;
+		}
+	}
+	else { //Если ячейка находится в нижней половине
+		position = 4 * (position % 12) - 2;
+		place = 23;
+		for (int i = 23; i >= 8; i--) {
+			if (Field[i][position] != ' ') {
+				place--;
+			}
+			else {
+				place++;  //Magic
+				break;
+			}
+		}
+	}
+	if (Field[place][position] == ' ') {   //Исключение удаления из пустой ячейки
+		cout << "-Эта ячейка пуста,попробуйте еще раз-" << endl;
+	}
+	else
+		Field[place][position] = ' ';
 }
 
 bool Is_This_Turn_Possible(int position1, int position2, char chip) { //Проверка,можно ли совершить ход из pos1 в pos2
@@ -150,7 +184,35 @@ void Turn(int position1, int position2,char chip) {
 			}
 		}
 
+		if (Field[place1][position1] != chip) {
+			cout << "~~Вы не можете ходить чужими фишками!~~" << endl;
+			return;
+		}
+		else
 		swap(Field[place1][position1], Field[place2][position2]); //Если все выполнено верно,то меняется соответствующая фишка из первой ячейки и пустота из второй ячейки
+	}
+}
+
+void Round(char chip, int number) {
+	int  block1, block2, i; //Показания кубиков
+	cout << "--Ход игрока №" << number << endl;
+	block1 = Throw_Block();
+	Sleep(100);  //Для как можно большего рандома
+	block2 = Throw_Block();
+	vector <int> points;  //Вектор,хранящий оставшиеся ходы
+	if (block1 == block2) {
+		cout << "Показания кубиков : " << block1 << " и " << block2 << ". Дубль! Вы можете сделать четыре хода" << endl;
+		for (i = 0; i < 4; i++)  //Заполнение в случае дубля
+			points.push_back(block1);
+	}
+	else {  //Заполение при обычном броске
+		cout << "Показания кубиков : " << block1 << " и " << block2 << "." << endl;
+		points.push_back(block1);
+		points.push_back(block2);
+	}
+
+	while (!points.empty()) {
+		//Тело раунда
 	}
 }
 
