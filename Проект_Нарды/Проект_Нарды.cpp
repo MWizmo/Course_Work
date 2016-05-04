@@ -122,6 +122,32 @@ bool Is_This_Turn_Possible(int position1, int position2, char chip) { //Проверка
 	else return false;
 }
 
+bool Is_This_Finish_Possible(int position, vector<int> &vec, int home) { //Проверка,можно ли вывести фишку с поля
+	if ((position >= home) && (position <= home + 5))  //Находится ли фишка в своем доме
+	{
+		if (home == 19) {  //Для первого игрока
+			for (int i = 0; i < vec.size(); i++) {
+				if ((25 - position) <= vec[i]) { //Если расстояние до конца строки меньше длины возможного хода,
+					swap(vec[i], vec[vec.size() - 1]);  // удаляем фишку с поля и убираем ход из вектора
+					vec.pop_back();
+					return true;
+				}
+			}
+			return false;
+		}
+		else {
+			for (int i = 0; i < vec.size(); i++) {  //Аналогично для второго игрока
+				if ((13 - position) <= vec[i]) {
+					swap(vec[i], vec[vec.size() - 1]);
+					vec.pop_back();
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+}
+
 void Turn(int position1, int position2,char chip) {
 	int place1, place2, i;
 	if (!Is_This_Turn_Possible(position1, position2,chip)) { //Проверка возможности хода
@@ -193,7 +219,7 @@ void Turn(int position1, int position2,char chip) {
 	}
 }
 
-void Round(char chip, int number) {
+void Round(char chip, int number,int home) {
 	int  block1, block2, i; //Показания кубиков
 	cout << "--Ход игрока №" << number << endl;
 	block1 = Throw_Block();
@@ -242,8 +268,13 @@ void Game() {
 		Rules();
 	}
 	system("cls");
+	cout << "\n       --Важно! Правила ввода--\n-Для передвижения фишки(хода) необходимо ввести через пробел номера ячеек: 1-из которой вы хотите передвинуть фишку,2-в которую вы хотите поместить фишку\n-Если вы не можете сделать ни одного хода,пропишите 0 0\n-Если ваши фишки находятся в доме, и вы хотите вывести их с доски,пропишите через пробел номер позиции,из которой вы хотите убрать фишку, и ноль\n\n";
+	_getch();
+	system("cls");
+
 	int Who_is_first;
 	char chip1, chip2; //Фишки первого и второго игрока
+	int home1 = 19, home2 = 7; //Позиции,соответствующие началу "дома" для соответствующих фишек
 	
 	if (First_Step() == 1) {
 		cout << "   -- Первыми ходят нолики (O) -- " << endl;
@@ -259,6 +290,25 @@ void Game() {
 	}
 	cout << endl;
 	Start_Game(Who_is_first);
+
+	int current_player = 0;
+	for (; ; ) {   //Собственно игровой процесс
+		current_player = current_player % 2 + 1;
+		if (current_player == 1) {
+			Round(chip1, 1, home1);
+		}
+		else {
+			Round(chip2, 2, home2);
+		}
+		if (Chips_of_Players[0] == 0) {  //Условие победы
+			cout << "--Победил первый игрок. Поздравляем!--" << endl;
+			break;
+		}
+		if (Chips_of_Players[1] == 0) {
+			cout << "--Победил второй игрок. Поздравляем!--" << endl;
+			break;
+		}
+	}
 }
 
 int main()
