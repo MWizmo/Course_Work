@@ -238,7 +238,63 @@ void Round(char chip, int number,int home) {
 	}
 
 	while (!points.empty()) {
-		//Тело раунда
+	start:
+		if (!points.empty()) {
+			cout << "Оставшиеся попытки: ";  //Вывод всех оставшихся попыток,чтобы игрок не запутался
+			for (i = 0; i < points.size(); i++) {
+				cout << points[i] << " ";
+			}
+		}
+		cout << endl;
+
+		int from, to;  //Откуда шагаем и куда
+		cout << "Ваш ход: " << endl;
+		cin >> from >> to;
+
+		if ((from == 0) && (to == 0)) { //Пропуск хода
+			system("cls");
+			Field_Display();
+			break;
+		}
+		else  if ((to == 0) && (from != 0)) {  //Если игрок решил вывести фишку с поля
+			if (Is_This_Finish_Possible(from, points, home)) {
+				Delete_Chip(from);  //Проверяем,можно ли так сделать, и выводим фишку с поля
+				Chips_of_Players[number - 1]--; //Уменьшение числа фишек игрока
+				system("cls");
+				Field_Display();
+				if ((Chips_of_Players[0] == 0) || (Chips_of_Players[1] == 0))  //Победа одного из игроков
+					break;
+			}
+			else {
+				cout << "~~Вы не можете вывести эту фишку с поля~~" << endl;
+			}
+		}
+		else {
+			int length; //Дальность хода
+			if ((from >= 19) && (to <= 6)) //Если фишка находится снизу справа,то ход определяется немного по-другому
+				length = (24 - from) + to;
+			else
+				length = to - from;
+			bool flag = false; //Флаг возможности хода
+			for (i = 0; i < points.size(); i++) {
+				if (points[i] == length) {
+					flag = true;  //Если показания кубиков совпадают с длиной хода,то ход возможен
+					if (Is_This_Turn_Possible(from, to, chip)) {
+						Turn(from, to, chip); //Собственно ход
+						system("cls");
+						Field_Display();
+						swap(points[i], points[points.size() - 1]);
+						points.pop_back(); //Удаление показания кубиков из вектора
+						if (!points.empty())
+							goto start;   //Обработка бага,когда после дубля ходят сразу две фишки
+						else break;
+					}
+					else break;
+				}
+			}
+			if (flag == false)
+				cout << "~~Вы не можете так сходить~~" << endl;
+		}
 	}
 }
 
