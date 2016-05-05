@@ -87,6 +87,15 @@ void Delete_Chip(int position) {  //Удаление одной фишки из ячейки(возможно,с ве
 		Field[place][position] = ' ';
 }
 
+bool Is_Number(string str) {  //Проверка,является ли строка числом
+	for (int i = 0; i < str.size(); i++) {
+		if (!isdigit(str[i])) {
+			return false;
+		}
+	}
+	return true;
+}
+
 bool Is_This_Turn_Possible(int position1, int position2, char chip) { //Проверка,можно ли совершить ход из pos1 в pos2
 	if ((position1 > position2) && (position1 <= 19)) //Назад ходить нельзя
 		return false;
@@ -248,8 +257,20 @@ void Round(char chip, int number,int home) {
 		cout << endl;
 
 		int from, to;  //Откуда шагаем и куда
-		cout << "Ваш ход: " << endl;
-		cin >> from >> to;
+		string strfrom, strto;  //Вспомогательные переменные
+		for (;;) {
+			cout << "Ваш ход: ";
+			cin >> strfrom;  //Блок обработки ошибок. Если игрок введет не число,программа не вылетит,а сообщит 
+			cin >> strto;   // об этом
+			if (Is_Number(strfrom) && (Is_Number(strto))) {
+				from = stoi(strfrom); //Если все правильно,переводим строки в числа
+				to = stoi(strto);
+				break;
+			}
+			else {
+				cout << "~~Вы что-то ввели не так~~" << endl; //Если все-таки введены не числа
+			}
+		}
 
 		if ((from == 0) && (to == 0)) { //Пропуск хода
 			system("cls");
