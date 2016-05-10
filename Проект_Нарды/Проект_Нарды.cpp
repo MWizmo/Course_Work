@@ -230,7 +230,7 @@ void Turn(int position1, int position2,char chip) {
 
 void Round(char chip, int number,int home) {
 	int  block1, block2, i; //Показания кубиков
-	cout << "--Ход игрока №" << number << endl;
+	cout << "--Ход игрока №" << number << "(" << chip << ")--" << endl;
 	block1 = Throw_Block();
 	Sleep(100);  //Для как можно большего рандома
 	block2 = Throw_Block();
