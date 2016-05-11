@@ -240,14 +240,14 @@ void Round(char chip, int number,int home) {
 		for (i = 0; i < 4; i++)  //Заполнение в случае дубля
 			points.push_back(block1);
 	}
-	else {  //Заполение при обычном броске
+	else {  //Заполнение при обычном броске
 		cout << "Показания кубиков : " << block1 << " и " << block2 << "." << endl;
 		points.push_back(block1);
 		points.push_back(block2);
 	}
 
 	while (!points.empty()) {
-	start:
+		bool flag = false; //Флаг возможности хода
 		if (!points.empty()) {
 			cout << "Оставшиеся попытки: ";  //Вывод всех оставшихся попыток,чтобы игрок не запутался
 			for (i = 0; i < points.size(); i++) {
@@ -278,7 +278,8 @@ void Round(char chip, int number,int home) {
 			break;
 		}
 		else  if ((to == 0) && (from != 0)) {  //Если игрок решил вывести фишку с поля
-			if (Is_This_Finish_Possible(from, points, home)) {
+			if (Is_This_Finish_Possible(from, points, home)) 
+			{
 				Delete_Chip(from);  //Проверяем,можно ли так сделать, и выводим фишку с поля
 				Chips_of_Players[number - 1]--; //Уменьшение числа фишек игрока
 				system("cls");
@@ -296,28 +297,27 @@ void Round(char chip, int number,int home) {
 				length = (24 - from) + to;
 			else
 				length = to - from;
-			bool flag = false; //Флаг возможности хода
 			for (i = 0; i < points.size(); i++) {
 				if (points[i] == length) {
-					flag = true;  //Если показания кубиков совпадают с длиной хода,то ход возможен
+					flag = true;
+					break;      //Если показания кубиков совпадают с длиной хода,то ход возможен
+				}
+			}
 					if (Is_This_Turn_Possible(from, to, chip)) {
 						Turn(from, to, chip); //Собственно ход
 						system("cls");
 						Field_Display();
-						swap(points[i], points[points.size() - 1]);
+						if (i != 4) {
+							swap(points[i], points[points.size() - 1]);
+						}
 						points.pop_back(); //Удаление показания кубиков из вектора
-						if (!points.empty())
-							goto start;   //Обработка бага,когда после дубля ходят сразу две фишки
-						else break;
 					}
 					else break;
 				}
-			}
 			if (flag == false)
 				cout << "~~Вы не можете так сходить~~" << endl;
 		}
 	}
-}
 
 void Start_Game(int who_is_first) {
 	Field_Creation();
@@ -378,11 +378,11 @@ void Game() {
 			Round(chip2, 2, home2);
 		}
 		if (Chips_of_Players[0] == 0) {  //Условие победы
-			cout << "--Победил первый игрок. Поздравляем!--" << endl;
+			cout << "--Победил первый игрок. Бинго!--" << endl;
 			break;
 		}
 		if (Chips_of_Players[1] == 0) {
-			cout << "--Победил второй игрок. Поздравляем!--" << endl;
+			cout << "--Победил второй игрок. Бинго!--" << endl;
 			break;
 		}
 	}
